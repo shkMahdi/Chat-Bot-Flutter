@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class OpenAIService {
-  static const String apiKey =
-  String.fromEnvironment("OPENAI_API_KEY");
+  String get apiKey => dotenv.env['OPENAI_API_KEY'] ?? "";
 
   Future<String> sendMessage(String message) async {
     final res = await http.post(

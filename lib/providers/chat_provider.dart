@@ -27,7 +27,7 @@ class ChatProvider extends ChangeNotifier {
       if (useOpenAI) {
         reply = await openAI.sendMessage(msg);
       } else {
-        reply = await freeApi.getResponse();
+        reply = await freeApi.getResponse(msg);
       }
 
       messages.add({
