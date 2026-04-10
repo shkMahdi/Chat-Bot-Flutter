@@ -17,32 +17,55 @@ class MessageBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     final formatted = DateFormat('hh:mm a').format(time);
 
-    return Row(
-      mainAxisAlignment:
-      isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
-      children: [
-        if (!isUser) const CircleAvatar(child: Icon(Icons.smart_toy)),
-        const SizedBox(width: 6),
-        Column(
-          crossAxisAlignment:
-          isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              margin: const EdgeInsets.symmetric(vertical: 4),
-              decoration: BoxDecoration(
-                color: isUser ? Colors.blue : Colors.grey,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(text,
-                  style: const TextStyle(color: Colors.white)),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment:
+            isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (!isUser) const CircleAvatar(child: Icon(Icons.smart_toy)),
+          const SizedBox(width: 8),
+          Flexible(
+            child: Column(
+              crossAxisAlignment:
+                  isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: isUser ? Colors.blue : Colors.grey[300],
+                    borderRadius: BorderRadius.only(
+                      topLeft: const Radius.circular(12),
+                      topRight: const Radius.circular(12),
+                      bottomLeft: Radius.circular(isUser ? 12 : 0),
+                      bottomRight: Radius.circular(isUser ? 0 : 12),
+                    ),
+                  ),
+                  child: Text(
+                    text,
+                    style: TextStyle(
+                      color: isUser ? Colors.white : Colors.black87,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 2),
+                  child: Text(
+                    formatted,
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                )
+              ],
             ),
-            Text(formatted, style: const TextStyle(fontSize: 10))
-          ],
-        ),
-        const SizedBox(width: 6),
-        if (isUser) const CircleAvatar(child: Icon(Icons.person)),
-      ],
+          ),
+          const SizedBox(width: 8),
+          if (isUser) const CircleAvatar(child: Icon(Icons.person)),
+        ],
+      ),
     );
   }
 }

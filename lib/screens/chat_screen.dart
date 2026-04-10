@@ -42,7 +42,7 @@ class ChatScreen extends StatelessWidget {
           Expanded(
             child: Consumer<ChatProvider>(
               builder: (_, provider, __) {
-                if (provider.messages.isEmpty) {
+                if (provider.messages.isEmpty && !provider.isTyping) {
                   return Center(
                     child: Lottie.network(
                       "https://assets10.lottiefiles.com/packages/lf20_jcikwtux.json",
@@ -53,8 +53,35 @@ class ChatScreen extends StatelessWidget {
 
                 return ListView.builder(
                   padding: const EdgeInsets.all(12),
-                  itemCount: provider.messages.length,
+                  itemCount: provider.messages.length + (provider.isTyping ? 1 : 0),
                   itemBuilder: (_, i) {
+                    if (i == provider.messages.length) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            const CircleAvatar(child: Icon(Icons.smart_toy, size: 18)),
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[300],
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(12),
+                                  topRight: Radius.circular(12),
+                                  bottomRight: Radius.circular(12),
+                                ),
+                              ),
+                              child: const Text(
+                                "Typing...",
+                                style: TextStyle(color: Colors.black54, fontSize: 12),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
                     final msg = provider.messages[i];
                     return MessageBubble(
                       text: msg['text'],
@@ -66,37 +93,40 @@ class ChatScreen extends StatelessWidget {
               },
             ),
           ),
-          Consumer<ChatProvider>(
-            builder: (_, provider, __) => provider.isTyping
-                ? const Padding(
-              padding: EdgeInsets.all(8),
-              child: Text("Typing..."),
-            )
-                : const SizedBox(),
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: controller,
-                  decoration: const InputDecoration(
-                    hintText: "Type message...",
-                    contentPadding: EdgeInsets.all(12),
+          const Divider(height: 1),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: controller,
+                    decoration: InputDecoration(
+                      hintText: "Type message...",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(24),
+                        borderSide: BorderSide.none,
+                      ),
+                      fillColor: Colors.grey[300],
+                      filled: true,
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                    ),
                   ),
                 ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.send),
-                onPressed: () {
-                  if (controller.text.isNotEmpty) {
-                    context
-                        .read<ChatProvider>()
-                        .sendMessage(controller.text);
-                    controller.clear();
-                  }
-                },
-              )
-            ],
+                const SizedBox(width: 8),
+                IconButton(
+                  icon: const Icon(Icons.send, color: Colors.blue),
+                  onPressed: () {
+                    if (controller.text.trim().isNotEmpty) {
+                      context
+                          .read<ChatProvider>()
+                          .sendMessage(controller.text.trim());
+                      controller.clear();
+                    }
+                  },
+                )
+              ],
+            ),
           )
         ],
       ),
